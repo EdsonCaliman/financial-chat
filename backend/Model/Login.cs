@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FinancialChat
+namespace FinancialChat.Model
 {
-    public class Register
+    public class Login
     {
         [Required]
         [DataType(DataType.EmailAddress)]
@@ -11,9 +11,5 @@ namespace FinancialChat
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
-
-        [Required]
-        [DataType(DataType.Password)]
-        public string ConfirmPassword { get; set; }
     }
 }
