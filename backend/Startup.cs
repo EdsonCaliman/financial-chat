@@ -1,12 +1,26 @@
 ﻿using FinancialChat.Hubs;
+using FinancialChat.Model;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinancialChat
 {
     public class Startup
     {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSignalR();
+
+            services.AddDbContext<AuthDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AuthDbContext>();
 
             services.AddCors(options =>
             {
@@ -30,6 +44,8 @@ namespace FinancialChat
             }
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseCors();
 
