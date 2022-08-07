@@ -1,4 +1,4 @@
-namespace ChatService
+namespace FinancialChat
 {
     public class Program
     {
