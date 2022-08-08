@@ -9,12 +9,10 @@ namespace FinancialChat.Controllers
     public class RegisterController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
 
-        public RegisterController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public RegisterController(UserManager<IdentityUser> userManager)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
         }
 
         [HttpPost]
@@ -24,13 +22,14 @@ namespace FinancialChat.Controllers
             {
                 UserName = register.Email,
                 Email = register.Email,
+                EmailConfirmed = true
             };
 
             var result = await _userManager.CreateAsync(user, register.Password);
             if (result.Succeeded)
             {
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                return Ok();
+                await _userManager.SetLockoutEnabledAsync(user, false);
+                return Created("", null);
             }
 
             return BadRequest(result.Errors.First());

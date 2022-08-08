@@ -1,5 +1,5 @@
-﻿using FinancialChat.Hubs;
-using FinancialChat.Model;
+﻿using FinancialChat.Data;
+using FinancialChat.Hubs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -51,7 +51,7 @@ namespace FinancialChat
             services.AddSingleton<IDictionary<string, UserConnection>>(opts => new Dictionary<string, UserConnection>());
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AuthDbContext context)
         {
             if (env.IsDevelopment())
             {
@@ -59,6 +59,8 @@ namespace FinancialChat
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Financial Chat"));
             }
+
+            context.Database.Migrate();
 
             app.UseRouting();
 
