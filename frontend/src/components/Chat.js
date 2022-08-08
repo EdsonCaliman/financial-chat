@@ -2,7 +2,7 @@ import SendMessageForm from "./SendMessageForm";
 import MessageContainer from "./MessageContainer";
 import { Button } from "react-bootstrap";
 
-const Chat = ({ sendMessage, messages, users, closeConnection }) => (
+const Chat = ({ sendMessage, messages, closeConnection }) => (
   <div>
     <div className="leave-room">
       <Button variant="danger" onClick={() => closeConnection()}>

@@ -2,31 +2,83 @@ import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 
 const Lobby = ({ joinRoom }) => {
-  const [user, setUser] = useState();
+  const [email, setEmail] = useState();
   const [room, setRoom] = useState();
+  const [password, setPassword] = useState();
 
   return (
-    <Form
-      className="lobby"
-      onSubmit={(e) => {
-        e.preventDefault();
-        joinRoom(user, room);
-      }}
-    >
-      <Form.Group>
-        <Form.Control
-          placeholder="name"
-          onChange={(e) => setUser(e.target.value)}
-        />
-        <Form.Control
-          placeholder="room"
-          onChange={(e) => setRoom(e.target.value)}
-        />
-      </Form.Group>
-      <Button variant="success" type="submit" disabled={!user || !room}>
-        Join
-      </Button>
-    </Form>
+    <>
+      <Form
+        className="lobby"
+        onSubmit={(e) => {
+          e.preventDefault();
+          joinRoom(email, password, room);
+        }}
+      >
+        <Form.Group>
+          <Form.Label>Login to chat</Form.Label>
+          <Form.Control
+            placeholder="email"
+            type="email"
+            required
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Form.Control
+            placeholder="password"
+            type="password"
+            required
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Form.Control
+            placeholder="room"
+            required
+            onChange={(e) => setRoom(e.target.value)}
+          />
+        </Form.Group>
+        <Button
+          variant="success"
+          type="submit"
+          disabled={!email || !password || !room}
+        >
+          Join
+        </Button>
+      </Form>
+      <Form
+        className="lobby"
+        onSubmit={(e) => {
+          e.preventDefault();
+          joinRoom(email, password, room);
+        }}
+      >
+        <Form.Group>
+          <Form.Label>Register to chat</Form.Label>
+          <Form.Control
+            placeholder="email"
+            type="email"
+            requireds
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Form.Control
+            placeholder="password"
+            type="password"
+            required
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Form.Control
+            placeholder="room"
+            required
+            onChange={(e) => setRoom(e.target.value)}
+          />
+        </Form.Group>
+        <Button
+          variant="success"
+          type="submit"
+          disabled={!email || !password || !room}
+        >
+          Join
+        </Button>
+      </Form>
+    </>
   );
 };
 

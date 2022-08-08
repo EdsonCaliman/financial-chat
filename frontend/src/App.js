@@ -8,28 +8,48 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const App = () => {
   const [connection, setConnection] = useState();
   const [messages, setMessages] = useState([]);
-  const [users, setUsers] = useState([]);
+  const [token, setToken] = useState();
 
-  const joinRoom = async (user, room) => {
+  const connectSignalR = async (email, room) => {
     try {
       const connection = new HubConnectionBuilder()
-        .withUrl("http://localhost:5187/chat")
+        .withUrl("http://localhost:5187/chat", {
+          accessTokenFactory: () => token,
+        })
         .configureLogging(LogLevel.Information)
         .build();
 
-      connection.on("ReceiveMessage", (user, message) => {
-        setMessages((messages) => [...messages, { user, message }]);
+      connection.on("ReceiveMessage", (email, message) => {
+        setMessages((messages) => [...messages, { user: email, message }]);
       });
 
       connection.onclose((e) => {
         setConnection();
         setMessages([]);
-        setUsers([]);
       });
 
       await connection.start();
-      await connection.invoke("JoinRoom", { user, room });
+      await connection.invoke("JoinRoom", { user: email, room });
       setConnection(connection);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const joinRoom = async (email, password, room) => {
+    try {
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: email, password: password }),
+      };
+      fetch("http://localhost:5187/api/login", requestOptions)
+        .then((response) => response.json())
+        .then((data) => setToken(data.token));
+
+      await connectSignalR(email, room);
     } catch (e) {
       console.log(e);
     }
@@ -60,7 +80,6 @@ const App = () => {
         <Chat
           sendMessage={sendMessage}
           messages={messages}
-          users={users}
           closeConnection={closeConnection}
         />
       )}
