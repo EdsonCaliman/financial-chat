@@ -6,9 +6,9 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["FinancialChat.csproj", "."]
+COPY ["backend/FinancialChat/FinancialChat.csproj", "."]
 RUN dotnet restore "./FinancialChat.csproj"
-COPY . .
+COPY backend/FinancialChat .
 WORKDIR "/src/."
 RUN dotnet build "FinancialChat.csproj" -c Release -o /app/build
 
