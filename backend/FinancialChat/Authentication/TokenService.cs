@@ -1,4 +1,5 @@
 ﻿using FinancialChat.Model;
+using FinancialChat.Parameters;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -8,18 +9,18 @@ namespace FinancialChat.Authentication
 {
     public class TokenService : ITokenService
     {
-        private readonly IConfiguration _configuration;
+        private readonly JwtParameters _jwtParameters;
 
-        public TokenService(IConfiguration configuration)
+        public TokenService(JwtParameters jwtParameters)
         {
-            _configuration = configuration;
+            _jwtParameters = jwtParameters;
         }
 
         public string GenerateToken(Login login)
         {
-            var _secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var _issuer = _configuration["Jwt:Issuer"];
-            var _audience = _configuration["Jwt:Audience"];
+            var _secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtParameters.Key));
+            var _issuer = _jwtParameters.Issuer;
+            var _audience = _jwtParameters.Audience;
 
             var signinCredentials = new SigningCredentials(_secretKey, SecurityAlgorithms.HmacSha256);
 

@@ -1,4 +1,4 @@
-﻿namespace FinancialChat
+﻿namespace FinancialChat.Hubs
 {
     public class UserConnection
     {
