@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 
-const Lobby = ({ joinRoom }) => {
+const Lobby = ({ joinRoom, registerAndJoinRoom }) => {
   const [email, setEmail] = useState();
   const [room, setRoom] = useState();
   const [password, setPassword] = useState();
+  const [confirmPassword, setConfirmPassword] = useState();
 
   return (
     <>
@@ -47,7 +48,7 @@ const Lobby = ({ joinRoom }) => {
         className="lobby"
         onSubmit={(e) => {
           e.preventDefault();
-          joinRoom(email, password, room);
+          registerAndJoinRoom(email, password, confirmPassword, room);
         }}
       >
         <Form.Group>
@@ -65,6 +66,12 @@ const Lobby = ({ joinRoom }) => {
             onChange={(e) => setPassword(e.target.value)}
           />
           <Form.Control
+            placeholder="confirmPassword"
+            type="password"
+            required
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+          <Form.Control
             placeholder="room"
             required
             onChange={(e) => setRoom(e.target.value)}
@@ -73,7 +80,7 @@ const Lobby = ({ joinRoom }) => {
         <Button
           variant="success"
           type="submit"
-          disabled={!email || !password || !room}
+          disabled={!email || !password || !confirmPassword || !room}
         >
           Join
         </Button>

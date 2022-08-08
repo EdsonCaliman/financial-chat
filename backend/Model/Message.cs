@@ -7,5 +7,10 @@
         public DateTime CreatedAt { get; set; }
         public string Room { get; set; }
         public string User { get; set; }
+
+        public Message()
+        {
+            CreatedAt = DateTime.UtcNow;
+        }
     }
 }

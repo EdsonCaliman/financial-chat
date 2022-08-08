@@ -36,6 +36,39 @@ const App = () => {
     }
   };
 
+  const registerAndJoinRoom = async (
+    email,
+    password,
+    confirmPassword,
+    room
+  ) => {
+    try {
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          confirmPassword: confirmPassword,
+        }),
+      };
+      const response = await fetch(
+        "http://localhost:5187/api/Register",
+        requestOptions
+      );
+
+      if (response.ok) {
+        await joinRoom(email, password, room);
+      } else {
+        alert("Invalid data, verify the email and password");
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const joinRoom = async (email, password, room) => {
     try {
       const requestOptions = {
@@ -45,11 +78,18 @@ const App = () => {
         },
         body: JSON.stringify({ email: email, password: password }),
       };
-      fetch("http://localhost:5187/api/login", requestOptions)
-        .then((response) => response.json())
-        .then((data) => setToken(data.token));
+      const response = await fetch(
+        "http://localhost:5187/api/Login",
+        requestOptions
+      );
 
-      await connectSignalR(email, room);
+      if (response.ok) {
+        const data = await response.json();
+        setToken(data.token);
+        await connectSignalR(email, room);
+      } else {
+        alert("Invalid data, verify the email and password or register");
+      }
     } catch (e) {
       console.log(e);
     }
@@ -75,7 +115,7 @@ const App = () => {
     <div className="app">
       <h2>FinancialChat</h2>
       {!connection ? (
-        <Lobby joinRoom={joinRoom} />
+        <Lobby joinRoom={joinRoom} registerAndJoinRoom={registerAndJoinRoom} />
       ) : (
         <Chat
           sendMessage={sendMessage}

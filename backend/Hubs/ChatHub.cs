@@ -1,4 +1,6 @@
 ﻿using FinancialChat.Data;
+using FinancialChat.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace FinancialChat.Hubs
@@ -27,6 +29,7 @@ namespace FinancialChat.Hubs
             return base.OnDisconnectedAsync(exception);
         }
 
+        [Authorize]
         public async Task JoinRoom(UserConnection userConnection)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.Room);
@@ -38,6 +41,7 @@ namespace FinancialChat.Hubs
             await Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", _botUser, $"{userConnection.User} has joined {userConnection.Room}");
         }
 
+        [Authorize]
         private async Task GetMessages(UserConnection userConnection)
         {
             var messages = _context.Messages
@@ -51,11 +55,20 @@ namespace FinancialChat.Hubs
             }
         }
 
-        public async Task SendMessage(string message)
+        [Authorize]
+        public async Task SendMessage(string textMessage)
         {
             if (_connections.TryGetValue(Context.ConnectionId, out UserConnection userConnection))
             {
-                await Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", userConnection.User, message);
+                var message = new Message()
+                {
+                    Text = textMessage,
+                    Room = userConnection.Room,
+                    User = userConnection.User
+                };
+                await _context.Messages.AddAsync(message);
+                await _context.SaveChangesAsync();
+                await Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", userConnection.User, textMessage);
             }
         }
     }
