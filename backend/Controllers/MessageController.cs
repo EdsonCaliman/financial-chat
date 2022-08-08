@@ -6,8 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinancialChat.Controllers
 {
-    [Route("/message")]
+    [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class MessageController : Controller
     {
         private readonly AuthDbContext _context;

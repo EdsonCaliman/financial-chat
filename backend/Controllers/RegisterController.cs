@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FinancialChat.Controllers
 {
-    [Route("/register")]
+    [Route("api/[controller]")]
     [ApiController]
     public class RegisterController : Controller
     {

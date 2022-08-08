@@ -1,18 +1,21 @@
-﻿using FinancialChat.Model;
+﻿using FinancialChat.Authentication;
+using FinancialChat.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinancialChat.Controllers
 {
-    [Route("/login")]
+    [Route("api/[controller]")]
     [ApiController]
     public class LoginController : Controller
     {
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly ITokenService _tokenService;
 
-        public LoginController(SignInManager<IdentityUser> signInManager)
+        public LoginController(SignInManager<IdentityUser> signInManager, ITokenService tokenService)
         {
             _signInManager = signInManager;
+            _tokenService = tokenService;
         }
 
         [HttpPost]
@@ -22,7 +25,8 @@ namespace FinancialChat.Controllers
 
             if (identityResult.Succeeded)
             {
-                return Ok();
+                var token = _tokenService.GenerateToken(login);
+                return Ok(new { Token = token });
             }
 
             return BadRequest();
