@@ -2,6 +2,6 @@
 {
     public interface IStockService
     {
-        void GetStockQuote(string symbol);
+        Task GetStockQuote(string symbol, string rooom);
     }
 }

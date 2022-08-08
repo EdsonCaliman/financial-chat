@@ -1,6 +1,7 @@
 ﻿using FinancialChat.Model;
 using FinancialChat.Parameters;
 using FinancialChat.Publisher;
+using System.Globalization;
 
 namespace FinancialChat.Stock
 {
@@ -15,14 +16,44 @@ namespace FinancialChat.Stock
             _externalServicesParameter = externalServicesParameter;
         }
 
-        public void GetStockQuote(string symbol)
+        public async Task GetStockQuote(string symbol, string room)
         {
-            //https://stooq.com/q/l/?s=aapl.us&f=sd2t2ohlcv&h&e=csv
+            try
+            {
+                var uri = _externalServicesParameter.StooqUrl + $"q/l/?s={symbol}&f=sd2t2ohlcv&h&e=csv";
 
+                var httpClient = new HttpClient();
 
-            var stock = new StockQuote { Symbol = symbol, Value = 10 };
+                string[]? lastLine = null;
 
-            _publisher.SendMessage(stock);
+                using (var stream = await httpClient.GetStreamAsync(uri))
+                {
+                    using (var reader = new StreamReader(stream))
+                    {
+                        while (!reader.EndOfStream)
+                        {
+                            var line = reader.ReadLine();
+                            lastLine = line.Split(',');
+                        }
+                    }
+                }
+
+                if (lastLine?.Length > 0)
+                {
+                    var stock = new StockQuote
+                    {
+                        Symbol = symbol,
+                        Room = room,
+                        Value = decimal.Parse(lastLine[6], CultureInfo.InvariantCulture)
+                    };
+
+                    _publisher.SendMessage(stock);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

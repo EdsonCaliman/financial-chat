@@ -1,4 +1,5 @@
-﻿using FinancialChat.Data;
+﻿using FinancialChat.Consumer;
+using FinancialChat.Data;
 using FinancialChat.Hubs;
 using FinancialChat.Modules;
 using Microsoft.AspNetCore.Identity;
@@ -38,10 +39,11 @@ namespace FinancialChat
                 });
             });
 
+            services.AddHostedService<ConsumerService>();
+
             services.ConfigureSwagger();
 
             services.ConfigureContainer(Configuration);
-
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AuthDbContext context)
